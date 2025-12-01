@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Index</title>
+</head>
+<body>
+    <input type="text" placeholder="Enter text" id="input">
+    <button id="submitBtn">Submit</button>
+    <p id="result"></p>
+
+    <script type="module">
+        console.log("Script file");
+        
+        // Get elements from the DOM
+        const submitBtn = document.querySelector("#submitBtn");
+        const inputEl = document.querySelector("#input");
+        const resultEl = document.querySelector("#result");
+
+        // Event listener for button click
+        submitBtn.addEventListener('click', async function submitBtnClickHandler() {
+            console.log(inputEl.value);
+            
+            // Clear previous result and show a loading message (optional, but good practice)
+            resultEl.textContent = 'Sending request...'; 
+
+            try {
+                // Fetch call to the backend API
+                const response = await fetch('/api/greet', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: inputEl.value })
+                });
+
+                // Check for HTTP errors (status code not 2xx)
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // Display the greeting message from the backend
+                resultEl.textContent = data.message;
+            } catch (error) {
+                console.error('Error:', error);
+                resultEl.textContent = 'Error sending request: ' + error.message; 
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+</head>
+<body>
+    <link href="style.css">
+</body>
+</html>
+ -->
